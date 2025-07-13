@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post</title>
+    <link rel="stylesheet" href="post.css">
+</head>
+<body>
+    <header id="floating-header" class="floating-bar">
+        <a href="index.html" class="header-back-btn">←</a>
+        <h2 id="header-title" class="header-post-title"></h2>
+        <div class="header-placeholder"></div>
+    </header>
+
+    <div class="post-container">
+        <main class="post-content">
+            <h1 id="post-title"></h1>
+            <p id="post-author" class="author-info"></p>
+            <hr>
+            <div id="post-body"></div>
+        </main>
+
+        <footer class="post-footer">
+            <div class="footer-actions">
+                <button id="like-btn" class="action-btn">
+                    <span class="icon">❤️</span>
+                </button>
+            </div>
+            <div class="footer-nav">
+                <button id="prev-post-btn" class="nav-btn">&lt; 이전</button>
+                <button id="list-btn" class="nav-btn">목록</button>
+                <button id="next-post-btn" class="nav-btn">다음 &gt;</button>
+            </div>
+        </footer>
+    </div>
+
+    <div id="side-panel-overlay" class="side-panel-overlay"></div>
+    <div id="side-panel" class="side-panel">
+        <div class="panel-header">
+            <h3>목차</h3>
+            <button id="close-panel-btn" title="닫기">&times;</button>
+        </div>
+        <div id="panel-post-list" class="panel-post-list">
+            </div>
+    </div>
+
+    <script src="post.js"></script>
+</body>
+</html>

@@ -1,0 +1,88 @@
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    margin: 0;
+    background-color: #f0f2f5;
+}
+header {
+    background-color: white; padding: 1rem; border-bottom: 1px solid #ddd;
+    position: sticky; top: 0; z-index: 10;
+}
+h1 { text-align: center; margin: 0 0 1rem 0; }
+.tabs { display: flex; justify-content: space-around; margin-bottom: 1rem; }
+.tabs a { text-decoration: none; color: #888; padding: 0.5rem; }
+.tabs a.active { color: black; border-bottom: 2px solid black; font-weight: bold; }
+
+.search-box {
+    position: relative;
+    padding: 0 1rem;
+}
+.search-box::before {
+    content: '🔍';
+    position: absolute;
+    left: 2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #aaa;
+}
+#search-input {
+    width: 100%;
+    padding: 0.8rem 1rem 0.8rem 2.5rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-sizing: border-box;
+    font-size: 1rem;
+}
+
+.post-item-link { text-decoration: none; color: inherit; }
+.post-item {
+    background-color: white; margin: 1rem; padding: 1rem;
+    border-radius: 8px; display: flex; gap: 1rem; cursor: pointer;
+    position: relative;
+    transition: background-color 0.2s;
+}
+.post-item:hover { background-color: #f9f9f9; }
+.thumbnail-container {
+    width: 100px;
+    height: 75px;
+    flex-shrink: 0;
+    background-color: #eee;
+    border-radius: 4px;
+    overflow: hidden;
+}
+.thumbnail { width: 100%; height: 100%; object-fit: cover; }
+.post-info { flex-grow: 1; }
+.post-info h3 { margin: 0 0 0.5rem 0; font-size: 1rem; }
+.post-info p { margin: 0; font-size: 0.8rem; color: #555; }
+.tag {
+    display: inline-block; background-color: #ffc107; color: white;
+    padding: 2px 6px; font-size: 0.7rem; border-radius: 4px; margin-top: 0.5rem;
+}
+
+#add-post-btn {
+    position: fixed; bottom: 2rem; right: 2rem; width: 60px; height: 60px;
+    border-radius: 50%; background-color: #007bff; color: white;
+    font-size: 2.5rem; line-height: 60px; text-align: center;
+    border: none; cursor: pointer; box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    text-decoration: none;
+}
+
+.delete-btn {
+    position: absolute;
+    top: 0.8rem;
+    right: 0.8rem;
+    width: 24px;
+    height: 24px;
+    border: none;
+    background: #e0e0e0;
+    color: white;
+    font-size: 1rem;
+    font-weight: bold;
+    line-height: 24px;
+    text-align: center;
+    border-radius: 50%;
+    cursor: pointer;
+    opacity: 0;
+    transition: all 0.2s;
+}
+.post-item:hover .delete-btn { opacity: 1; }
+.delete-btn:hover { background: #f44336; }

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>내 보관함</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>보관함</h1>
+        <div class="tabs">
+            <a href="#" class="tab-btn" data-tab="recent">최근</a>
+            <a href="#" class="tab-btn active" data-tab="purchased">구매</a>
+            <a href="#" class="tab-btn" data-tab="liked">좋아요</a>
+            <a href="#" class="tab-btn" data-tab="deleted">삭제된 글</a>
+        </div>
+        <div class="search-box">
+            <input type="text" id="search-input" placeholder="포스트 제목, 닉네임 검색">
+        </div>
+    </header>
+
+    <main id="post-list-container">
+        </main>
+    
+    <a href="write.html" id="add-post-btn">+</a>
+
+    <script src="storage.js"></script>
+</body>
+</html>
