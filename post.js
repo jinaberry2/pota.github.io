@@ -2,23 +2,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const params = new URLSearchParams(window.location.search);
     const postId = Number(params.get('id'));
 
-    // ===== 문제 해결: '최근' 탭 기록 기능 추가 =====
+    // '최근' 탭을 위한 조회 기록
     function recordRecentView(id) {
         if (!id) return;
         let recentViews = JSON.parse(localStorage.getItem('recentViews')) || [];
-        // 기존에 있던 기록은 삭제 (최신으로 올리기 위함)
         recentViews = recentViews.filter(view => view.id !== id);
-        // 새로운 기록을 맨 앞에 추가
         recentViews.unshift({ id: id, timestamp: Date.now() });
-        // 최근 본 글 목록은 최대 50개까지만 저장
         if (recentViews.length > 50) {
             recentViews = recentViews.slice(0, 50);
         }
         localStorage.setItem('recentViews', JSON.stringify(recentViews));
     }
     recordRecentView(postId);
-    // =============================================
 
+    // 포스트 데이터 불러오기
     let allPosts = JSON.parse(localStorage.getItem('myPosts')) || [];
     let deletedPosts = JSON.parse(localStorage.getItem('deletedPosts')) || [];
 
@@ -34,40 +31,41 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    // 기본 포스트 내용 채우기
+    // 포스트 내용 채우기
     document.title = post.title;
     document.getElementById('header-title').textContent = post.title;
     document.getElementById('post-title').textContent = post.title;
     document.getElementById('post-author').textContent = `글쓴이: ${post.author}`;
     document.getElementById('post-body').innerHTML = post.content;
 
-    // 상단 바 스크롤 이벤트
+    // ===== ✅ 상단 헤더 스크롤 기능 (수정) =====
     const header = document.getElementById('floating-header');
-    let lastScrollY = window.scrollY;
     
-    function handleScroll() {
-        const currentScrollY = window.scrollY;
-        if (currentScrollY < lastScrollY || currentScrollY < 50) {
-            header.classList.add('visible');
-        } else {
-            header.classList.remove('visible');
-        }
-        lastScrollY = currentScrollY;
-    }
-    
-    if (document.body.scrollHeight <= window.innerHeight + 150) {
+    if (document.body.scrollHeight <= window.innerHeight + 50) {
         header.classList.add('visible');
     } else {
-        window.addEventListener('scroll', handleScroll);
-        handleScroll();
+        let lastScrollY = window.scrollY;
+        
+        const handleScroll = () => {
+            const currentScrollY = window.scrollY;
+            if (currentScrollY < lastScrollY || currentScrollY <= 50) {
+                header.classList.add('visible');
+            } else {
+                header.classList.remove('visible');
+            }
+            lastScrollY = currentScrollY <= 0 ? 0 : currentScrollY;
+        };
+
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        handleScroll(); // 페이지 로드 시 즉시 실행하여 헤더 표시
     }
-    
-    // 하단 바 버튼
+    // =============================================
+
+    // 하단 바 버튼 기능
     const likeBtn = document.getElementById('like-btn');
     const prevBtn = document.getElementById('prev-post-btn');
     const nextBtn = document.getElementById('next-post-btn');
-    
-    // 좋아요 버튼 기능
+
     function updateLikeButton() {
         likeBtn.classList.toggle('active', post.liked);
     }
@@ -80,13 +78,12 @@ document.addEventListener('DOMContentLoaded', () => {
         post.liked = !post.liked;
         updateLikeButton();
         const originalIndex = allPosts.findIndex(p => p.id === postId);
-        if(originalIndex > -1) {
+        if (originalIndex > -1) {
             allPosts[originalIndex].liked = post.liked;
             localStorage.setItem('myPosts', JSON.stringify(allPosts));
         }
     });
 
-    // 이전/다음 버튼 기능
     if (isDeletedPost) {
         prevBtn.disabled = true;
         nextBtn.disabled = true;
@@ -94,24 +91,24 @@ document.addEventListener('DOMContentLoaded', () => {
         const sortedPosts = allPosts.slice().reverse();
         const currentPostIndex = sortedPosts.findIndex(p => p.id === postId);
 
-        if (currentPostIndex > 0) {
-            prevBtn.disabled = false;
-            prevBtn.addEventListener('click', () => window.location.href = `post.html?id=${sortedPosts[currentPostIndex - 1].id}`);
-        } else {
-            prevBtn.disabled = true;
+        prevBtn.disabled = currentPostIndex <= 0;
+        if (!prevBtn.disabled) {
+            prevBtn.addEventListener('click', () => {
+                window.location.href = `post.html?id=${sortedPosts[currentPostIndex - 1].id}`;
+            });
         }
 
-        if (currentPostIndex < sortedPosts.length - 1) {
-            nextBtn.disabled = false;
-            nextBtn.addEventListener('click', () => window.location.href = `post.html?id=${sortedPosts[currentPostIndex + 1].id}`);
-        } else {
-            nextBtn.disabled = true;
+        nextBtn.disabled = currentPostIndex >= sortedPosts.length - 1;
+        if (!nextBtn.disabled) {
+            nextBtn.addEventListener('click', () => {
+                window.location.href = `post.html?id=${sortedPosts[currentPostIndex + 1].id}`;
+            });
         }
     }
 
     updateLikeButton();
 
-    // ===== 문제 해결: 사이드 패널 기능 =====
+    // 사이드 패널 기능
     const listBtn = document.getElementById('list-btn');
     const sidePanel = document.getElementById('side-panel');
     const panelOverlay = document.getElementById('side-panel-overlay');
@@ -137,7 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
             panelPostList.innerHTML = '<p style="padding: 1rem; text-align: center;">구매한 포스트가 없습니다.</p>';
             return;
         }
-        
+
         purchasedPosts.forEach((p, index) => {
             const itemLink = document.createElement('a');
             itemLink.href = `post.html?id=${p.id}`;
@@ -145,12 +142,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (p.id === postId) {
                 itemLink.classList.add('active');
             }
-
-            const itemHtml = `
+            itemLink.innerHTML = `
                 <span class="panel-post-number">${purchasedPosts.length - index}</span>
                 <span class="panel-post-title">${p.title}</span>
             `;
-            itemLink.innerHTML = itemHtml;
             panelPostList.appendChild(itemLink);
         });
     }
@@ -158,5 +153,4 @@ document.addEventListener('DOMContentLoaded', () => {
     listBtn.addEventListener('click', openSidePanel);
     closePanelBtn.addEventListener('click', closeSidePanel);
     panelOverlay.addEventListener('click', closeSidePanel);
-    // =============================================
 });
